@@ -1,0 +1,32 @@
+<div class="span12" style="text-align: center">
+	<div class="input-append">
+		<form ng-submit="submit()">
+			<input ng-model="term" name="term" class="input-xxlarge" type="text" placeholder="Search by keyword...">
+			<input id="submit" type="submit" class="btn" value="Go">
+		</form>
+	</div>
+</div> 
+<div ng-show="(genes.length > 0)" class="row-fluid">
+	<div class="span4" >
+		<table class="table table-condensed table-bordered table-striped">
+			<thead>
+				<tr>
+					<th>Gene Symbol</th>
+					<th>Location</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-class="geneRowClass(gene)" style="cursor: pointer; cursor: hand;" ng-repeat="gene in genes" ng-click="loadGene(gene)">
+					<td>{{gene.symbol}}</td>
+					<td>{{gene.location}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="span8">
+		<p>
+			<h3 style="display: inline;">{{geneSelected.symbol}}</h3> <em>{{geneSelected.location}}</em>
+		</p>
+		<p ng-bind="geneSelected.description"></p>
+	</div>
+</div>

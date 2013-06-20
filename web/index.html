@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en" ng-app="chrdb">
+<head>
+  <meta charset="utf-8">
+  <title>chrDB</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div class="navbar">
+  <div class="container-fluid">  
+    <a class="brand" href="#">chrDB</a>
+    <ul class="nav pull-right">
+      <li style="padding-right: 6px;"><button title="Manage your account" class="btn btn-mini"><i class="icon-user"></i></button></li>
+      <li><button title="Logout" class="btn btn-mini" href="#"><i class="icon-off"></i></button></li>
+    </ul>        
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span12" ng-view></div>
+  </div>
+</div>
+<script src="js/lodash.min.js"></script>
+<script src="js/angular.js"></script>
+<script src="js/angular-resource.js"></script>
+<script src="js/ui-bootstrap-tpls-0.3.0.min.js"></script>
+<script src="app/app.js"></script>
+<script src="app/services.js"></script>
+<script src="app/controllers.js"></script>
+</body>
+</html>

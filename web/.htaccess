@@ -1,0 +1,12 @@
+<IfModule mod_rewrite.c>
+    Options -MultiViews
+
+    RewriteEngine On
+
+    # API calls routed to Silex API server
+    RewriteRule ^api/(.*)$ api.php [L,QSA]
+
+    # Everything else go to AngularJS for front end routing
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.html [L]
+</IfModule>
