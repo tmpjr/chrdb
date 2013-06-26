@@ -8,12 +8,14 @@
 </head>
 <body>
 <div class="navbar">
-  <div class="container-fluid">  
-    <a class="brand" href="#">chrDB</a>
-    <ul class="nav pull-right">
-      <li style="padding-right: 6px;"><button title="Manage your account" class="btn btn-mini"><i class="icon-user"></i></button></li>
-      <li><button title="Logout" class="btn btn-mini" href="#"><i class="icon-off"></i></button></li>
-    </ul>        
+  <div class="navbar-inner">
+    <div class="container-fluid">  
+      <a class="brand" href="#"><span>chrDB<span class="version">v0.1.0</span></span></a>
+      <ul class="nav pull-right">
+        <li style="padding-right: 6px;"><button title="Manage your account" class="btn"><i class="icon-user"></i></button></li>
+        <li><button title="Logout" class="btn" href="#"><i class="icon-off"></i></button></li>
+      </ul>        
+    </div>
   </div>
 </div>
 <div class="container-fluid">
@@ -21,9 +23,9 @@
     <div class="span12" ng-view></div>
   </div>
 </div>
-<script src="js/lodash.min.js"></script>
 <script src="js/angular.js"></script>
 <script src="js/angular-resource.js"></script>
+<script src="js/lodash.min.js"></script>
 <script src="js/ui-bootstrap-tpls-0.3.0.min.js"></script>
 <script src="app/app.js"></script>
 <script src="app/services.js"></script>

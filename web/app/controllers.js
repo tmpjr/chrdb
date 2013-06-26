@@ -55,6 +55,30 @@ function IndexCtrl($scope, GeneSrch) {
   };
 }
 
+function AccountCtrl($scope, accountFactory) {
+  $scope.emailHasError = false;
+  $scope.formError = false;
+  $scope.formSuccess = false;
+
+  $scope.create = function() {
+    //console.log('POST');
+    //console.log($scope.account);
+
+    accountFactory.create($scope.account)
+      .success(function(data, status, headers, config){
+        console.log(data);
+        console.log(status);
+        $scope.formSuccess = data;
+      }).error(function(data, status, headers, config){
+        console.log(data);
+        console.log(status);
+        $scope.formError = data;
+      });
+
+    //$http.post('/api/account/create', this);
+  }
+}
+
 function GeneCtrl($scope, $routeParams, Gene) {
 	$scope.gene = Gene.get({id: $routeParams.id});
 }
