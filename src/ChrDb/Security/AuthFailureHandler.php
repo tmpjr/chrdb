@@ -1,8 +1,8 @@
 <?php 
 
-
 namespace ChrDb\Security;
 
+use Silex\Application;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,6 +10,10 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerI
 
 class AuthFailureHandler implements AuthenticationFailureHandlerInterface
 {
+    public function __construct(Application $app)
+    {
+        //$app['monolog']->addDebug('CALL ' . __METHOD__);
+    }
 	/**
      * This is called when an interactive authentication attempt fails. This is
      * called by authentication listeners inheriting from
@@ -22,6 +26,6 @@ class AuthFailureHandler implements AuthenticationFailureHandlerInterface
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
-    	return new Response('Login failed.', 500);
+    	return new Response('Login failed.', 401);
     }
 }

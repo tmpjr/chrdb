@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace ChrDb\Api;
 
@@ -7,6 +7,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use InvalidArgumentException;
+use ChrDb\Security\Auth;
+use Symfony\Component\Security\Core\Exception\BadCredentialsException;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 
 class UserController
 {
@@ -34,8 +37,8 @@ class UserController
 		$roles = 'ROLE_USER';
 		$hash = password_hash($password, PASSWORD_BCRYPT);
 
-		$stmt = $app['db']->prepare("INSERT INTO user 
-			(username,pwd_hash,roles,activated) 
+		$stmt = $app['db']->prepare("INSERT INTO user
+			(username,pwd_hash,roles,activated)
 			VALUES (:username,:pwd_hash,:roles,:activated)");
 		$stmt->bindValue(':username', $username);
 		$stmt->bindValue(':pwd_hash', $hash);
@@ -61,15 +64,15 @@ class UserController
 		$roles = 'ROLE_ADMIN';
 		$hash = password_hash($password, PASSWORD_BCRYPT);
 
-		$sql = "UPDATE 
-					user 
-				SET 
+		$sql = "UPDATE
+					user
+				SET
 					updated_on = NOW(),
 					username = :username,
-					pwd_hash = :pwd_hash, 
-					roles = :roles, 
-					activated = :activated 
-				WHERE 
+					pwd_hash = :pwd_hash,
+					roles = :roles,
+					activated = :activated
+				WHERE
 					id = :id";
 		$stmt = $app['db']->prepare($sql);
 		$stmt->bindValue(':username', $username);
@@ -87,27 +90,30 @@ class UserController
 
 	public function loginAction(Request $request, Application $app)
 	{
-		$username = trim($request->get('username'));
-		$password = $request->get('password');
-		$hash = password_hash($password, PASSWORD_BCRYPT);
-		$status = false;
+		$username = trim($request->get('inputEmail'));
+		$password = $request->get('inputPassword');
 
-		$sql = "SELECT * FROM user WHERE username = :user";
-		$stmt = $app['db']->prepare($sql);
-		$stmt->bindValue(':user', $username);
-		$stmt->execute();
-		$user = $stmt->fetch();
-
-		if ($user !== false) {
-			if (password_verify($password, $hash)) {
-				$status = true;
-			}
+		try {
+			$auth = new Auth($app);
+			$user = $auth->getAuthenticatedUser($username, $password);
+		} catch (BadCredentialsException $e) {
+			return new Response($e->getMessage(), 401);
+		} catch (UsernameNotFoundException $e) {
+			return new Response($e->getMessage(), 401);
+		} catch (\Exception $e) {
+			return new Response($e->getMessage(), 401);
 		}
 
-		return new JsonResponse(array(
-			'status' => $status,
-			'user' => $user
-		));
+		unset($user['passwd']);
+		$app['session']->set('user', $user);
+
+		return new JsonResponse($user);
+	}
+
+	public function logoutAction(Application $app)
+	{
+		$app['session']->clear();
+		return new Response('Logged out', 200);
 	}
 
 	public function fetchAction(Request $request, Application $app)
@@ -124,10 +130,10 @@ class UserController
 		//}
 
 		$response = array(
-			'status' 	=> 'success', 
+			'status' 	=> 'success',
 			'data' 		=> $user
 		);
-		
-		return new JsonResponse($response);		
+
+		return new JsonResponse($response);
 	}
 }

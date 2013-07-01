@@ -1,0 +1,13 @@
+<div class="offset4 span4">	
+	<div ng-show="(!formSuccess)">
+		<form class="form-signin" ng-submit="submit()">
+			<h3 class="form-signin-heading">Sign in to your account</h3>
+			<div class="alert alert-error" ng-show="formError" ng-bind="formError"></div>
+			<div class="alert alert-success" ng-show="formSuccess" ng-bind="formSuccess"></div>
+			<input type="text" class="input-block-level" placeholder="Email address" ng-model="login.inputEmail" id="inputEmail">
+			<span class="help-inline" ng-show="emailHasError"></span>
+			<input type="password" class="input-block-level" placeholder="Password" id="inputPassword" ng-model="login.inputPassword">
+			<button class="btn btn-primary" type="submit">Sign in</button>
+		</form>
+	</div>
+</div>
