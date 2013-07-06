@@ -8,50 +8,60 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use InvalidArgumentException;
 use ChrDb\Security\Auth;
+use ChrDb\Exception;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Doctrine\DBAL\DBALException;
 
 class UserController
 {
-	public function createAction(Request $request, Application $app)
+	public function saveAction(Request $request, Application $app)
 	{
 		$app['monolog']->addDebug('email: ' . $request->get('inputEmail'));
 
-		$username = trim($request->get('inputEmail'));
-		$password = $request->get('inputPassword');
-		$passwordAgain = $request->get('inputPasswordRepeat');
-		$activated = intval(0);
+        $fullName = trim($request->get('inputFullName'));
+        $intendedUse = trim($request->get('inputIntendedUse'));
+        $username = trim($request->get('inputEmail'));
+        $password = $request->get('inputPassword');
+        $passwordAgain = $request->get('inputPasswordConfirm');
+        $activated = intval(0);
 
-		if (empty($username)) {
-			return new Response('Usename is a required field.', 400);
-		}
+        if (empty($username)) {
+            throw new Exception("Email is required");
+        }
 
-		if (empty($password)) {
-			return new Response('Password is a required field.', 400);
-		}
+        if (empty($password)) {
+            throw new Exception("Password is required");
+        }
 
-		if ($password !== $passwordAgain) {
-			return new Response('Passwords do not match.', 400);
-		}
+        if (empty($fullName)) {
+            throw new Exception("Full name is required");
+        }
 
-		$roles = 'ROLE_USER';
-		$hash = password_hash($password, PASSWORD_BCRYPT);
+        if ($password !== $passwordAgain) {
+            throw new Exception("Passwords do not match");
+        }
 
-		$stmt = $app['db']->prepare("INSERT INTO user
-			(username,pwd_hash,roles,activated)
-			VALUES (:username,:pwd_hash,:roles,:activated)");
-		$stmt->bindValue(':username', $username);
-		$stmt->bindValue(':pwd_hash', $hash);
-		$stmt->bindValue(':roles', $roles);
-		$stmt->bindValue(':activated', $activated);
-		try {
-			$stmt->execute();
-		} catch (Exception $e) {
-			$app['monolog']->addError($e->getMessage());
-			return new Response('Account could no be created. User already exists.', 500);
-		}
+        $roles = 'ROLE_USER';
+        $passwd = $app['security.encoder.digest']->encodePassword($password, null);
 
-		return new Response('Account successfully created. Please search your email inbox for activation instructions.', 200);
+        try {
+            $stmt = $app['db']->prepare("INSERT INTO user
+                (username,full_name,intended_use,passwd,roles,activated)
+                VALUES (:username,:full_name,:intended_use,:passwd,:roles,:activated)");
+            $stmt->bindValue(':username', $username);
+            $stmt->bindValue(':full_name', $fullName);
+            $stmt->bindValue(':intended_use', $intendedUse);
+            $stmt->bindValue(':passwd', $passwd);
+            $stmt->bindValue(':roles', $roles);
+            $stmt->bindValue(':activated', $activated);
+            $stmt->execute();
+        } catch (DBALException $e) {
+            $app['monolog']->addError('Database exception' . $e->getMessage());
+            throw new Exception("Database error creating acount. The authorities have been notified, you may rest easy.");
+        }
+
+		return new Response('Account successfully created', 200);
 	}
 
 	public function updateAction(Request $request, Application $app)
@@ -74,6 +84,7 @@ class UserController
 					activated = :activated
 				WHERE
 					id = :id";
+
 		$stmt = $app['db']->prepare($sql);
 		$stmt->bindValue(':username', $username);
 		$stmt->bindValue(':pwd_hash', $hash);
@@ -113,7 +124,7 @@ class UserController
 	public function logoutAction(Application $app)
 	{
 		$app['session']->clear();
-		return new Response('Logged out', 200);
+		return new Response('Logged out', 401);
 	}
 
 	public function fetchAction(Request $request, Application $app)

@@ -1,0 +1,67 @@
+<div ng-show="!accountCreated" class="well">
+  <form name="usrRegFrm" class="" ng-submit="submit()" novalidate>
+    <legend>User Registration Request</legend>
+    <div class="control-group"
+      ng-class="{error: usrRegFrm.inputFullName.$error.required && formSubmitted}">
+      <label for="inputFullName" class="control-label">Full Name</label>
+      <div class="controls">
+        <div class="input-prepend">
+          <span class="add-on"><i class="icon-user"></i></span>
+          <input type="text" class="input-xlarge" ng-model="user.inputFullName"
+            id="inputFullName" name="inputFullName" placeholder="Full Name" required>
+        </div>
+        <span class="help-inline" ng-show="formSubmitted && usrRegFrm.inputFullName.$error.required">Required!</span>
+      </div>
+    </div>
+    <div class="control-group" ng-class="{error: (usrRegFrm.inputEmail.$error.email || usrRegFrm.inputEmail.$error.required) && formSubmitted}">
+      <label for="inputEmail" class="control-label">Email</label>
+      <div class="controls">
+        <div class="input-prepend">
+          <span class="add-on"><i class="icon-envelope"></i></span>
+          <input ng-model="user.inputEmail" type="email" class="input-xlarge"
+            id="inputEmail" name="inputEmail" placeholder="Email" required>
+        </div>
+        <span class="help-inline" ng-show="formSubmitted && usrRegFrm.inputEmail.$error.required">Required!</span>
+        <span class="help-inline" ng-show="formSubmitted && usrRegFrm.inputEmail.$error.email">Not a valid email!</span>
+      </div>
+    </div>
+    <div class="control-group">
+        <label for="inputIntendedUse" class="control-label">Intended Use</label>
+        <div class="controls">
+          <select id="inputIntendedUse" name="inputIntendedUse">
+            <option value="Personal">Personal</option>
+            <option value="Commercial">Commercial</option>
+            <option value="Academic">Academic</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+    </div>
+    <div class="control-group" ng-class="{error: usrRegFrm.inputPassword.$error.required && formSubmitted}">
+      <label for="inputPassword" class="control-label">Password</label>
+      <div class="controls">
+        <div class="input-prepend">
+          <span class="add-on"><i class="icon-lock"></i></span>
+          <input ng-model="user.inputPassword" type="password" class="input-xlarge"
+            id="inputPassword" name="inputPassword" placeholder="Password" required>
+        </div>
+        <span class="help-inline" ng-show="formSubmitted && usrRegFrm.inputPassword.$error.required">Required!</span>
+      </div>
+    </div>
+    <div class="control-group" ng-class="{error: usrRegFrm.inputPasswordConfirm.$error.required && formSubmitted}">
+      <label for="inputPasswordConfirm" class="control-label">Confirm Password</label>
+      <div class="controls">
+        <div class="input-prepend">
+          <span class="add-on"><i class="icon-lock"></i></span>
+          <input ng-model="user.inputPasswordConfirm" type="password" class="input-xlarge"
+            id="inputPasswordConfirm" name="inputPasswordConfirm" placeholder="Re-enter password" required>
+        </div>
+        <span class="help-inline" ng-show="formSubmitted && usrRegFrm.inputPasswordConfirm.$error.required">Required!</span>
+      </div>
+    </div>
+    <div class="alert alert-error" ng-show="hasFormError" ng-bind="formErrorMessage"></div>
+    <div class="controls">
+      <button type="submit" class="btn btn-success">Submit Request</button>
+    </div>
+  </form>
+</div>
+<div ng-show="accountCreated" class="alert alert-success">Thank you for requesting an account. I will personally review your request and approve it. Since this application is in alpha requests will be limited for the time being. You should receive an email within 24 hours but probably much sooner.</div>

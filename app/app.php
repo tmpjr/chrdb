@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder;
 use Silex\Provider\SecurityServiceProvider;
 use Silex\Provider\UrlGeneratorServiceProvider;
+use ChrDb\Exception;
 
 $app = new Silex\Application();
 
@@ -53,13 +54,18 @@ $checkAuth = function(Request $request) use ($app) {
 };
 
 // simple controller to see if user logged in
-$app->get('/user/checkauth', function() use ($app) {
+$app->get('/user/auth', function() use ($app) {
     $user = $app['session']->get('user');
     if (!isset($user['id'])) {
         return new Response('User not authenticated', 401);
     }
 
     return new JsonResponse($user);
+});
+
+$app->error(function(Exception $e, $code) use ($app) {
+    $app['monolog']->addError("APP ERROR [$code]: " . $e->getMessage());
+    return new Response($e->getMessage(), 403);
 });
 
 //
@@ -75,10 +81,10 @@ $app['api.user.controller'] = $app->share(function() use ($app) {
     return new ChrDb\Api\UserController();
 });
 $app->get('/api/user/{id}', "api.user.controller:fetchAction");
-$app->post('/api/user/create', "api.user.controller:createAction");
+$app->post('/user/save', "api.user.controller:saveAction");
 $app->post('/api/user/update', "api.user.controller:updateAction");
 $app->post('/user/login', "api.user.controller:loginAction");
-$app->post('/user/logout', "api.user.controller:logoutAction");
+$app->get('/user/logout', "api.user.controller:logoutAction");
 
 $app['api.auth.controller'] = $app->share(function() use ($app) {
     return new ChrDb\Api\AuthController();

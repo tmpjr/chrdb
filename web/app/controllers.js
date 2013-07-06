@@ -1,23 +1,25 @@
 'use strict';
 
 /* Controllers */
-function NavCtrl($scope, $http, $location, authService) {
+function NavCtrl($scope, $http, $location, User, Config) {
+    $scope.userConfig = Config.getParams();
+
+    $scope.createAccount = function() {
+        $location.path("/user/create");
+    };
+
+    $scope.signIn = function() {
+        $location.path("/user/login");
+    };
+
     $scope.logout = function() {
-        $scope.userData = {};
-        $scope.userLoggedIn = false;
-        $http({
-            url: '/api/user/logout',
-            method: 'POST'
-        })
-        .success(function(data, status, headers, config){
-            authService.logoutConfirmed();
-        }).error(function(data, status, headers, config){
-            authService.logoutConfirmed();
-        });
+        User.logout();
+        $location.path("/user/login");
     };
 }
 
-function IndexCtrl($scope, $http, $location, GeneSrch) {
+function IndexCtrl($scope, $http, $location, GeneSrch, Config) {
+    //console.log('IndexCtrl');
 	$scope.genes = {};
 	$scope.submitted = false;
     $scope.geneSelected = {};
@@ -25,52 +27,18 @@ function IndexCtrl($scope, $http, $location, GeneSrch) {
 
     $scope.shouldBeOpen = false;
 
-    $scope.$safeApply = function () {
-        var $scope, fn, force = false;
-        if (arguments.length == 1) {
-            var arg = arguments[0];
-            if (typeof arg == 'function') {
-                fn = arg;
-            } else {
-                $scope = arg;
-            }
-        } else {
-            $scope = arguments[0];
-            fn = arguments[1];
-            if (arguments.length == 3) {
-                force = !!arguments[2];
-            }
-        }
-        $scope = $scope || this;
-        fn = fn || function () { };
-        if (force || !$scope.$$phase) {
-            $scope.$apply ? $scope.$apply(fn) : $scope.apply(fn);
-        } else {
-            fn();
-        }
-    };
-
     $scope.submit = function() {
         if (this.term) {
             $scope.submitted = true;
 
             $scope.genes = GeneSrch.query({
                 term: this.term
-            },
-            function success() {
-                console.log('success');
-            },
-            function error(response) {
-                console.log(response.data.message);
             });
-
-            $scope.$safeApply();
         }
     };
 
     $scope.loadGene = function(gene) {
         $scope.geneSelected = gene;
-        $scope.$safeApply();
     }
 
     $scope.geneRowClass = function(gene) {
@@ -78,35 +46,60 @@ function IndexCtrl($scope, $http, $location, GeneSrch) {
     };
 }
 
-function AccountCtrl($scope, accountFactory) {
-    $scope.emailHasError = false;
-    $scope.formError = false;
-    $scope.formSuccess = false;
+function UserCtrl($scope, $location, Config, User) {
+    $scope.userContentTpl = 'app/partials/create.html';
+    Config.resetParams();
+    $scope.userConfig = Config.getParams();
 
-    $scope.create = function() {
-        accountFactory.create($scope.account)
-        .success(function(data, status, headers, config){
-            $scope.formSuccess = data;
-        }).error(function(data, status, headers, config){
-            $scope.formError = data;
-        });
+    var path = $location.path();
+    if (path.indexOf('login') > -1) {
+        $scope.userConfig.showCreateUserBtn = true;
+        //console.log($scope.userConfig);
+        $scope.userContentTpl = 'app/partials/login.html';
+    } else {
+        $scope.userConfig.showLoginBtn = true;
     }
-}
 
-function LoginCtrl($scope, $http, $location, authService) {
+    $scope.formSubmitted = false;
+    $scope.hasFormError = false;
+    $scope.formErrorMessage = '';
+    $scope.accountCreated = false;
     $scope.submit = function() {
-        $http({
-            url: '/api/user/login',
-            method: 'POST',
-            data: $scope.login
-        })
-        .success(function(data, status, headers, config) {
-            $scope.userData = data;
-            authService.loginConfirmed();
-        }).error(function(data, status, headers, config) {
-
-        });
+        //console.log(this.user);
+        $scope.formSubmitted = true;
+        if (this.usrRegFrm.$valid === true) {
+            User.save(this.user)
+            .success(function(data, status, headers, config){
+                $scope.accountCreated = true;
+            })
+            .error(function(data, status, headers, config){
+                console.log('error', data);
+                $scope.hasFormError = true;
+                $scope.formErrorMessage = data;
+            });
+        }
     }
+
+    $scope.loginFormSubmitted = false;
+    $scope.login = function() {
+        //console.log(this.login.inputEmail);
+        $scope.loginFormSubmitted = true;
+        if (this.usrLoginForm.$valid === true) {
+            User.login(this.credentials)
+            .success(function(data, status, headers, config){
+                $scope.userData = data;
+                //authService.loginConfirmed();
+                $location.path("/");
+            })
+            .error(function(data, status, headers, config){
+                console.log('error', data);
+                $scope.hasFormError = true;
+                $scope.formErrorMessage = data;
+            });
+        }
+    }
+
+    //console.log($location);
 }
 
 function GeneCtrl($scope, $routeParams, Gene) {

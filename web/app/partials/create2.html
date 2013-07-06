@@ -1,0 +1,64 @@
+  <div class="well">
+    <form name="usrRegFrm" class="" ng-submit="create()" novalidate>
+      <legend>User Registration Request</legend>
+      <div class="control-group error">
+        <label for="inputFullName" class="control-label">xFull Name</label>
+        <div class="controls">
+          <div class="input-prepend">
+            <span class="add-on"><i class="icon-user"></i></span>
+            <input type="text" class="input-xlarge" ng-model="inputFullName"
+              id="inputFullName" name="inputFullName" placeholder="Full Name" required>
+          </div>
+          <span class="help-inline" ng-show="usrRegFrm.inputFullName.$dirty && usrRegFrm.inputFullName.$error.required">Required!</span>
+        </div>
+      </div>
+      <div class="control-group">
+        <label for="inputEmail" class="control-label">Email</label>
+        <div class="controls">
+          <div class="input-prepend">
+            <span class="add-on"><i class="icon-envelope"></i></span>
+            <input ng-model="inputEmail" type="email" class="input-xlarge"
+              id="inputEmail" name="inputEmail" placeholder="Email" required>
+          </div>
+          <span class="help-inline" ng-show="usrRegFrm.inputEmail.$dirty && usrRegFrm.inputEmail.$error.required">Required!</span>
+          <span class="help-inline" ng-show="usrRegFrm.inputEmail.$dirty && usrRegFrm.inputEmail.$error.email">Not valid email!</span>
+        </div>
+      </div>
+      <div class="control-group">
+          <label for="inputIntendedUse" class="control-label">Intended Use</label>
+          <div class="controls">
+            <select id="inputIntendedUse" name="inputIntendedUse">
+              <option value="Personal">Personal</option>
+              <option value="Commercial">Commercial</option>
+              <option value="Academic">Academic</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+      </div>
+      <div class="control-group">
+        <label for="inputPassword" class="control-label">Password</label>
+        <div class="controls">
+          <div class="input-prepend">
+            <span class="add-on"><i class="icon-lock"></i></span>
+            <input ng-model="inputPassword" type="password" class="input-xlarge"
+              id="inputPassword" name="inputPassword" placeholder="Password" required>
+          </div>
+          <span class="help-inline" ng-show="usrRegFrm.inputPassword.$dirty && usrRegFrm.inputPassword.$error.required">Required!</span>
+        </div>
+      </div>
+      <div class="control-group">
+        <label for="inputPasswordConfirm" class="control-label">Confirm Password</label>
+        <div class="controls">
+          <div class="input-prepend">
+            <span class="add-on"><i class="icon-lock"></i></span>
+            <input ng-model="inputPasswordConfirm" type="password" class="input-xlarge"
+              id="inputPasswordConfirm" name="inputPasswordConfirm" placeholder="Re-enter password" required>
+          </div>
+          <span class="help-inline" ng-show="usrRegFrm.inputPasswordConfirm.$dirty && usrRegFrm.inputPasswordConfirm.$error.required">Required!</span>
+        </div>
+      </div>
+      <div class="controls">
+        <button type="submit" class="btn btn-success">Submit Request</button>
+      </div>
+    </form>
+  </div>

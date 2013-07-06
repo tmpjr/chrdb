@@ -1,34 +1,9 @@
-<div class="offset4 span4 form-account-create">	
-	<h4 style="text-align: center">Create an Account</h4>
-	</br>
-	<div class="alert alert-error" ng-show="formError" ng-bind="formError"></div>
-	<div class="alert alert-success" ng-show="formSuccess" ng-bind="formSuccess"></div>
-	<div ng-show="(!formSuccess)">
-		<form class="form-horizontal" ng-submit="create()">
-			<div class="control-group">
-				<label class="control-label" for="inputEmail">Email</label>
-				<div class="controls">
-		      <input class="input-large" type="text" ng-model="account.inputEmail" id="inputEmail">
-		      <span class="help-inline" ng-show="emailHasError">Sample message...</span>
-		    </div>
-		  </div>
-		  <div class="control-group">
-				<label class="control-label" for="inputPassword">Password</label>
-				<div class="controls">
-					<input class="input-large" type="password" id="inputPassword" ng-model="account.inputPassword">
-				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label" for="inputPasswordRepeat">Retype Password</label>
-				<div class="controls">
-					<input class="input-large" type="password" id="inputPasswordRepeat" ng-model="account.inputPasswordRepeat">
-				</div>
-			</div>
-			<div class="control-group">
-		    <div class="controls">
-					<button type="submit" class="btn btn-primary">Submit</button>
-				</div>
-			</div>
-		</form>
+<div class="span7">
+	<div class="well">
+		<legend>About chrDB</legend>
+		<p><a href="#" class="brand">chrDB</a> is an open resource for the academic, commercial and hobbyist community. Its primary function is to provide a simple tool to research genomic data. In its infancy it will focus on the human genome but in the future other speicies will be added as time allows. Data will be stored from NCBI, OMIM and other open sources. This project started out as a learning tool for myself to learn the <a href="http://www.angularjs.org">AngularJS</a> framework but now I think it's worth releasing to the community and spending a few bucks on an Amazon Elastic Cloud instance and a domain name. chrdb.com is a great domain name don't you think? Anyway, you can find  <a href="https://github.com/tmpjr/chrdb">the source code here</a> and my <a href="http://www.linkedin.com/profile/view?id=3025808&trk=nav_responsive_tab_profile">LinkedIn profile here</a>. I'm always looking for contract opportunities as a Web Developer. Until now all work has been done on my own personal time.</p><p>Registration is easy and I will not share your email with anyone but you know the NSA is collecting your data anyway, right?</p>
 	</div>
+</div>
+<div class="span5">
+	<div ng-include src="'app/partials/create.html'"></div>
 </div>
